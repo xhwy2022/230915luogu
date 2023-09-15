@@ -1,43 +1,123 @@
-import tkinter as tk
-from tkinter import filedialog
-from tkinter import messagebox
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洛谷爬虫</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
 
-class GuiApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("洛谷题目爬取工具")
-        
-        self.difficulty_label = tk.Label(root, text="选择题目难度:")
-        self.difficulty_label.pack()
-        
-        self.difficulty_var = tk.StringVar()
-        self.difficulty_var.set("普及/提高-")  # 默认难度
-        self.difficulty_menu = tk.OptionMenu(root, self.difficulty_var, "入门", "普及-", "普及/提高-", "普及+/提高", "提高+/省选-", "省选/NOI-", "NOI/NOI+/CTSC")
-        self.difficulty_menu.pack()
-        
-        self.keyword_label = tk.Label(root, text="输入关键字:")
-        self.keyword_label.pack()
-        
-        self.keyword_entry = tk.Entry(root)
-        self.keyword_entry.pack()
-        
-        self.start_button = tk.Button(root, text="开始爬取", command=self.start_crawling)
-        self.start_button.pack()
-        
-    def start_crawling(self):
-        difficulty = self.difficulty_var.get()
-        keyword = self.keyword_entry.get()
-        
-        # 在此处执行爬取逻辑，将选择的难度和关键字传递给爬虫函数
-        
-        # 以下是一个示例弹窗，显示选择的难度和关键字
-        message = f"选择的难度: {difficulty}\n输入的关键字: {keyword}"
-        messagebox.showinfo("开始爬取", message)
+        h1 {
+            color: #333;
+        }
 
-def main():
-    root = tk.Tk()
-    app = GuiApp(root)
-    root.mainloop()
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
 
-if __name__ == "__main__":
-    main()
+        label {
+            display: block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>爬虫前端</h1>
+    <div class="container">
+        <form id="crawlerForm">
+            <label for="difficulty">难度：</label>
+            <select id="difficulty" name="difficulty">
+                <option value="所有难度">所有难度</option>
+                <option value="入门">入门</option>
+                <option value="普及-">普及-</option>
+                <option value="普及/提高-">普及/提高-</option>
+                <option value="普及+/提高">普及+/提高</option>
+                <option value="提高+/省选-">提高+/省选-</option>
+                <option value="省选/NOI-">省选/NOI-</option>
+                <option value="NOI/NOI+/CTSC">NOI/NOI+/CTSC</option>
+            </select>
+
+            <label for="year">年份：</label>
+            <select id="year" name="year">
+                <option value="全部年份">全部年份</option>
+                <option value="1997">1997</option>
+                <option value="1998">1998</option>
+                <!-- 添加更多年份选项 -->
+            </select>
+
+            <label for="keyword">关键词：</label>
+            <input type="text" id="keyword" name="keyword" placeholder="输入关键词">
+
+            <label for="savePath">保存路径：</label>
+            <input type="text" id="savePath" name="savePath" placeholder="选择保存路径" readonly>
+            <button type="button" id="selectPathBtn">选择路径</button>
+
+            <button type="button" id="startCrawlingBtn">开始爬取</button>
+        </form>
+
+        <div id="result">
+            <!-- 爬取结果将显示在这里 -->
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("selectPathBtn").addEventListener("click", function() {
+            // 弹出文件选择框，选择保存路径
+            const path = window.prompt("选择保存路径");
+            if (path) {
+                document.getElementById("savePath").value = path;
+            }
+        });
+
+        document.getElementById("startCrawlingBtn").addEventListener("click", function() {
+            // 获取表单数据
+            const form = document.getElementById("crawlerForm");
+            const formData = new FormData(form);
+
+            // 发送表单数据给后端爬虫（你的爬虫代码在后端运行）
+            // 这里使用示例文本来代替实际的爬虫操作
+            let result = "爬取到的结果：\n";
+            for (const pair of formData.entries()) {
+                result += `${pair[0]}: ${pair[1]}\n`;
+            }
+
+            // 显示爬取结果
+            document.getElementById("result").textContent = result;
+        });
+    </script>
+</body>
+</html>
