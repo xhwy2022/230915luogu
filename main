@@ -1,0 +1,75 @@
+import os
+import requests
+from bs4 import BeautifulSoup
+
+base_url = "https://www.luogu.com.cn/problem/P"
+
+save_folder = "LuoguProblems"
+if not os.path.exists(save_folder):
+    os.makedirs(save_folder)
+
+start_problem = 1000
+end_problem = 1050
+
+problem_dict = {}
+
+for problem_id in range(start_problem, end_problem + 1):
+    problem_url = f"{base_url}{problem_id}"
+    solution_url = f"https://www.luogu.com.cn/problem/solution/P{problem_id}"
+
+    response = requests.get(problem_url)
+    solution_response = requests.get(solution_url)
+    
+    if response.status_code == 200 and solution_response.status_code == 200:
+        problem_html = response.text
+        solution_html = solution_response.text
+
+        problem_soup = BeautifulSoup(problem_html, "html.parser")
+        solution_soup = BeautifulSoup(solution_html, "html.parser")
+
+        title = problem_soup.find("h1").text.strip()
+
+        difficulty_tag = problem_soup.find("span", {"class": "lg-lgd"})
+        if difficulty_tag:
+            difficulty = difficulty_tag.text.strip()
+        else:
+            difficulty = "未知"
+
+        solution_content = solution_soup.find("div", {"id": "article-content"}).get_text()
+
+        title_parts = title.split()
+        if len(title_parts) > 1 and title_parts[0].isdigit():
+            year = title_parts[0]
+            title = " ".join(title_parts[1:])
+        else:
+            year = "未知"
+
+        problem_folder = os.path.join(save_folder, difficulty, year)
+        if not os.path.exists(problem_folder):
+            os.makedirs(problem_folder)
+
+        with open(os.path.join(problem_folder, f"{title}.md"), "w", encoding="utf-8") as problem_file:
+            problem_file.write(f"# {title}\n\n")
+            problem_file.write(problem_soup.find("div", {"id": "problem-content"}).get_text())
+
+        with open(os.path.join(problem_folder, "Solution.md"), "w", encoding="utf-8") as solution_file:
+            solution_file.write(f"# Solution for {title}\n\n")
+            solution_file.write(solution_content)
+
+        if difficulty not in problem_dict:
+            problem_dict[difficulty] = {}
+        if year not in problem_dict[difficulty]:
+            problem_dict[difficulty][year] = []
+        problem_dict[difficulty][year].append(title)
+
+        print(f"已爬取题目 {problem_id}：{title}（难度：{difficulty}，年份：{year}）")
+
+print("\n题目分类：")
+for difficulty, year_dict in problem_dict.items():
+    print(f"- 难度: {difficulty}")
+    for year, titles in year_dict.items():
+        print(f"  - 年份: {year}")
+        for title in titles:
+            print(f"    - 题目: {title}")
+
+print("\n爬取完成！")
