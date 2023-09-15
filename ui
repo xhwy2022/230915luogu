@@ -1,0 +1,43 @@
+import tkinter as tk
+from tkinter import filedialog
+from tkinter import messagebox
+
+class GuiApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("洛谷题目爬取工具")
+        
+        self.difficulty_label = tk.Label(root, text="选择题目难度:")
+        self.difficulty_label.pack()
+        
+        self.difficulty_var = tk.StringVar()
+        self.difficulty_var.set("普及/提高-")  # 默认难度
+        self.difficulty_menu = tk.OptionMenu(root, self.difficulty_var, "入门", "普及-", "普及/提高-", "普及+/提高", "提高+/省选-", "省选/NOI-", "NOI/NOI+/CTSC")
+        self.difficulty_menu.pack()
+        
+        self.keyword_label = tk.Label(root, text="输入关键字:")
+        self.keyword_label.pack()
+        
+        self.keyword_entry = tk.Entry(root)
+        self.keyword_entry.pack()
+        
+        self.start_button = tk.Button(root, text="开始爬取", command=self.start_crawling)
+        self.start_button.pack()
+        
+    def start_crawling(self):
+        difficulty = self.difficulty_var.get()
+        keyword = self.keyword_entry.get()
+        
+        # 在此处执行爬取逻辑，将选择的难度和关键字传递给爬虫函数
+        
+        # 以下是一个示例弹窗，显示选择的难度和关键字
+        message = f"选择的难度: {difficulty}\n输入的关键字: {keyword}"
+        messagebox.showinfo("开始爬取", message)
+
+def main():
+    root = tk.Tk()
+    app = GuiApp(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
